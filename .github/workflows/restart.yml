@@ -1,0 +1,26 @@
+name: Auto Restart Colab Notebook
+
+on:
+  schedule:
+    - cron: '0 */12 * * *'   # Every 12 hours at minute 0
+  workflow_dispatch:
+
+jobs:
+  restart:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Puppeteer to restart notebook
+        env:
+          COLAB_URL: ${{ secrets.COLAB_URL }}
+          COOKIE_STRING: ${{ secrets.COOKIE_STRING }}
+        run: node index.js
